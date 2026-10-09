@@ -3,6 +3,10 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 from app.database import engine
+from app.logging.logger import get_logger
+
+
+logger = get_logger()
 
 
 router = APIRouter(
@@ -51,6 +55,20 @@ def create_order(order: OrderCreate):
 
         row = result.fetchone()
 
+    # Structured business event log
+    logger.info(
+        "Order created successfully",
+        extra={
+            "event": "order_created",
+            "context": {
+                "order_id": row.id,
+                "user_id": row.user_id,
+                "total_amount": float(row.total_amount),
+                "status": row.status,
+            },
+        },
+    )
+
     return {
         "id": row.id,
         "user_id": row.user_id,
@@ -58,6 +76,8 @@ def create_order(order: OrderCreate):
         "status": row.status,
         "created_at": row.created_at.isoformat(),
     }
+
+
 @router.get("/{order_id}")
 def get_order(order_id: int):
 

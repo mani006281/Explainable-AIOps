@@ -3,8 +3,16 @@ from pydantic import BaseModel
 from sqlalchemy import text
 
 from app.database import engine
+from app.logging.logger import get_logger
 
-router = APIRouter(prefix="/orders", tags=["Order Items"])
+
+logger = get_logger()
+
+
+router = APIRouter(
+    prefix="/orders",
+    tags=["Order Items"],
+)
 
 
 class OrderItemCreate(BaseModel):
@@ -37,7 +45,7 @@ def create_order_item(order_id: int, item: OrderItemCreate):
         # Check whether the product exists
         product = connection.execute(
             text("""
-                SELECT id
+                SELECT id, name
                 FROM products
                 WHERE id = :product_id
             """),
@@ -69,10 +77,26 @@ def create_order_item(order_id: int, item: OrderItemCreate):
 
         row = result.fetchone()
 
-        return {
-            "id": row.id,
-            "order_id": row.order_id,
-            "product_id": row.product_id,
-            "quantity": row.quantity,
-            "price": float(row.price),
-        }
+    # Structured business event log
+    logger.info(
+        "Order item added successfully",
+        extra={
+            "event": "order_item_added",
+            "context": {
+                "order_item_id": row.id,
+                "order_id": row.order_id,
+                "product_id": row.product_id,
+                "product_name": product.name,
+                "quantity": row.quantity,
+                "price": float(row.price),
+            },
+        },
+    )
+
+    return {
+        "id": row.id,
+        "order_id": row.order_id,
+        "product_id": row.product_id,
+        "quantity": row.quantity,
+        "price": float(row.price),
+    }
