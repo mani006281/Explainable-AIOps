@@ -1,0 +1,37 @@
+timestamp_utc,scenario,path,expected_delay_ms,status_code,measured_response_time_ms,error
+2026-10-10T09:23:14.738029+00:00,normal_health,/health,0,200,38.2,
+2026-10-10T09:23:15.039376+00:00,normal_products,/products/,0,200,300.83,
+2026-10-10T09:23:15.177692+00:00,normal_latency,/debug/test-latency,100,200,138.35,
+2026-10-10T09:23:16.691192+00:00,slow_latency,/debug/test-latency,1500,200,1512.87,
+2026-10-10T09:23:19.697897+00:00,slow_latency,/debug/test-latency,3000,200,3006.34,
+2026-10-10T09:23:19.731924+00:00,normal_health,/health,0,200,32.91,
+2026-10-10T09:23:19.768751+00:00,normal_products,/products/,0,200,36.18,
+2026-10-10T09:23:19.897582+00:00,normal_latency,/debug/test-latency,100,200,129.0,
+2026-10-10T09:23:21.430543+00:00,slow_latency,/debug/test-latency,1500,200,1531.93,
+2026-10-10T09:23:24.469486+00:00,slow_latency,/debug/test-latency,3000,200,3038.68,
+2026-10-10T09:23:24.487300+00:00,normal_health,/health,0,200,18.07,
+2026-10-10T09:23:24.520965+00:00,normal_products,/products/,0,200,32.74,
+2026-10-10T09:23:24.673181+00:00,normal_latency,/debug/test-latency,100,200,152.69,
+2026-10-10T09:23:26.234483+00:00,slow_latency,/debug/test-latency,1500,200,1560.73,
+2026-10-10T09:23:29.287580+00:00,slow_latency,/debug/test-latency,3000,200,3052.63,
+2026-10-10T09:30:38.167531+00:00,normal_health,/health,0,200,40.63,
+2026-10-10T09:30:38.298484+00:00,normal_products,/products/,0,200,130.82,
+2026-10-10T09:30:38.414545+00:00,normal_latency,/debug/test-latency,100,200,115.98,
+2026-10-10T09:30:39.949101+00:00,slow_latency,/debug/test-latency,1500,200,1534.14,
+2026-10-10T09:30:42.974932+00:00,slow_latency,/debug/test-latency,3000,200,3024.88,
+2026-10-10T09:30:42.991927+00:00,invalid_delay,/debug/test-latency,0,400,16.72,HTTP Error 400: Bad Request
+2026-10-10T09:30:43.007398+00:00,unknown_endpoint,/does-not-exist,0,404,15.49,HTTP Error 404: Not Found
+2026-10-10T09:30:43.012924+00:00,normal_health,/health,0,200,4.88,
+2026-10-10T09:30:43.023454+00:00,normal_products,/products/,0,200,10.43,
+2026-10-10T09:30:43.115126+00:00,normal_latency,/debug/test-latency,100,200,91.73,
+2026-10-10T09:30:44.622473+00:00,slow_latency,/debug/test-latency,1500,200,1507.59,
+2026-10-10T09:30:47.639047+00:00,slow_latency,/debug/test-latency,3000,200,3016.2,
+2026-10-10T09:30:47.674942+00:00,invalid_delay,/debug/test-latency,0,400,35.42,HTTP Error 400: Bad Request
+2026-10-10T09:30:47.704829+00:00,unknown_endpoint,/does-not-exist,0,404,29.41,HTTP Error 404: Not Found
+2026-10-10T09:30:47.716360+00:00,normal_health,/health,0,200,11.13,
+2026-10-10T09:30:47.758875+00:00,normal_products,/products/,0,200,41.52,
+2026-10-10T09:30:47.872688+00:00,normal_latency,/debug/test-latency,100,200,112.98,
+2026-10-10T09:30:49.397961+00:00,slow_latency,/debug/test-latency,1500,200,1525.12,
+2026-10-10T09:30:52.439309+00:00,slow_latency,/debug/test-latency,3000,200,3040.97,
+2026-10-10T09:30:52.474218+00:00,invalid_delay,/debug/test-latency,0,400,34.1,HTTP Error 400: Bad Request
+2026-10-10T09:30:52.503023+00:00,unknown_endpoint,/does-not-exist,0,404,29.31,HTTP Error 404: Not Found

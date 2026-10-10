@@ -1,6 +1,9 @@
+
+import asyncio
+import os
 import time
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from app.database import test_database_connection
@@ -15,14 +18,13 @@ from app.routes.payments import router as payments_router
 
 app = FastAPI(
     title="E-Commerce Demo Application",
-    description="Production-style e-commerce application for the Explainable AIOps project",
+    description=(
+        "Production-style e-commerce application "
+        "for the Explainable AIOps project"
+    ),
     version="0.1.0",
 )
 
-
-# ---------------------------------------------------------
-# Logger
-# ---------------------------------------------------------
 
 logger = get_logger()
 
@@ -32,7 +34,10 @@ logger = get_logger()
 # ---------------------------------------------------------
 
 @app.middleware("http")
-async def request_logging_middleware(request: Request, call_next):
+async def request_logging_middleware(
+    request: Request,
+    call_next,
+):
     start_time = time.perf_counter()
     status_code = 500
 
@@ -126,4 +131,36 @@ def database_health():
     return {
         "database": database,
         "status": "connected",
+    }
+
+
+# ---------------------------------------------------------
+# Development-Only Latency Test Endpoint
+# ---------------------------------------------------------
+
+@app.get(
+    "/debug/test-latency",
+    include_in_schema=False,
+)
+async def debug_test_latency(delay_ms: int = 1000):
+
+    # Require explicit development configuration.
+    if os.getenv("APP_ENV") != "development":
+        raise HTTPException(
+            status_code=404,
+            detail="Not found",
+        )
+
+    # Accept delays from 0 to 5000 milliseconds.
+    if not 0 <= delay_ms <= 5000:
+        raise HTTPException(
+            status_code=400,
+            detail="delay_ms must be between 0 and 5000",
+        )
+
+    await asyncio.sleep(delay_ms / 1000)
+
+    return {
+        "message": "Controlled latency test completed",
+        "simulated_delay_ms": delay_ms,
     }
