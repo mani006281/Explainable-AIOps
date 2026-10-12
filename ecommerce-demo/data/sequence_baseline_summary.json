@@ -1,0 +1,33 @@
+{
+  "input_observations": 300,
+  "window_size": 10,
+  "feature_count": 12,
+  "feature_names": [
+    "response_time_ms",
+    "log_response_time",
+    "status_200",
+    "status_400",
+    "status_404",
+    "status_other",
+    "endpoint_health",
+    "endpoint_products",
+    "endpoint_latency",
+    "endpoint_other",
+    "is_connection_error",
+    "is_http_error"
+  ],
+  "observation_split": {
+    "train": 210,
+    "val": 45,
+    "test": 45
+  },
+  "windows_per_split": {
+    "train": 201,
+    "val": 36,
+    "test": 36
+  },
+  "total_windows": 273,
+  "normal_baseline_windows": 273,
+  "split_method": "Chronological observation split before window generation",
+  "model_trained": false
+}

@@ -38,3 +38,24 @@ Thumbs.db
 # Testing
 .pytest_cache/
 .coverage
+
+
+# TensorFlow/Keras model files
+*.keras
+*.h5
+
+# Python cache directories
+__pycache__/
+
+# Generated ML artifacts and experimental outputs
+ml/artifacts/*.csv
+
+# Generated Python bytecode
+__pycache__/
+
+# TensorFlow model files (add explicitly only when needed)
+*.keras
+*.h5
+
+# Generated ML experiment outputs
+ml/artifacts/*.csv

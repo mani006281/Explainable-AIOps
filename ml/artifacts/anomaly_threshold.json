@@ -1,0 +1,25 @@
+{
+  "method": "validation_reconstruction_error_percentile",
+  "percentile": 95,
+  "threshold": 0.32886284589767456,
+  "window_size": 10,
+  "feature_names": [
+    "response_time_ms",
+    "log_response_time",
+    "status_200",
+    "status_400",
+    "status_404",
+    "status_other",
+    "endpoint_health",
+    "endpoint_products",
+    "endpoint_latency",
+    "endpoint_other",
+    "is_connection_error",
+    "is_http_error"
+  ],
+  "training_sequences": 201,
+  "validation_sequences": 36,
+  "test_sequences": 36,
+  "seed": 42,
+  "warning": "Prototype threshold. Evaluate on representative labeled normal and anomalous traffic before production use."
+}
