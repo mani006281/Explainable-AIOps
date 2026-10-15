@@ -1,61 +1,77 @@
 # Python
-__pycache__/
+
+**pycache**/
+**/**pycache**/
 *.py[cod]
 *.pyo
 
 # Virtual environment
+
 venv/
 .venv/
 
-# Environment variables
+# Environment variables and secrets
+
 .env
+.env.*
+!.env.example
 
 # Jupyter
+
 .ipynb_checkpoints/
 
 # ML generated files
+
 *.pt
 *.pth
 *.pkl
 *.joblib
+*.keras
+*.h5
 
 # Logs
+
 *.log
+ecommerce-demo/logs/
 
 # Node
+
 node_modules/
 dist/
 build/
 
 # IDE
+
 .vscode/
 .idea/
 
 # OS
+
 .DS_Store
 Thumbs.db
 
 # Testing
+
 .pytest_cache/
 .coverage
 
+# Generated ML artifacts
 
-# TensorFlow/Keras model files
-*.keras
-*.h5
+ml/artifacts/
+ml/artifacts_*/
 
-# Python cache directories
-__pycache__/
+# Generated model comparison outputs
 
-# Generated ML artifacts and experimental outputs
-ml/artifacts/*.csv
+ml/comparison_*/
 
-# Generated Python bytecode
-__pycache__/
+# Generated traffic datasets
 
-# TensorFlow model files (add explicitly only when needed)
-*.keras
-*.h5
+ecommerce-demo/data/traffic_*.csv
+ecommerce-demo/data/traffic_*.npz
+ecommerce-demo/data/traffic_*.json
 
-# Generated ML experiment outputs
-ml/artifacts/*.csv
+# Generated sequence datasets
+
+ecommerce-demo/data/sequence_*.csv
+ecommerce-demo/data/sequence_*.npz
+ecommerce-demo/data/sequence_*.json
