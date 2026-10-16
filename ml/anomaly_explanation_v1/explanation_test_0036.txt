@@ -1,0 +1,56 @@
+EXPLAINABLE AIOPS — ANOMALY EXPLANATION
+============================================================
+
+Window ID: test_0036
+Classification: Anomaly detected
+
+ANOMALY SCORE
+------------------------------------------------------------
+Reconstruction error: 0.026219226
+Threshold:            0.025898805
+Threshold exceedance: 0.000320422
+Exceedance relative to threshold: 1.24%
+
+TOP CONTRIBUTING FEATURES
+------------------------------------------------------------
+1. endpoint_health: 36.73% contribution
+2. log_response_time: 26.07% contribution
+3. endpoint_products: 15.90% contribution
+4. response_time_ms: 15.56% contribution
+5. endpoint_latency: 5.50% contribution
+
+INTERPRETATION
+------------------------------------------------------------
+The leading reconstruction-error contributions involve both endpoint indicators and response-time features.
+
+LARGEST INDIVIDUAL RECONSTRUCTION DISCREPANCIES
+------------------------------------------------------------
+Values below are inverse-scaled feature values. The error column
+is measured in the scaled feature space.
+
+Step  Feature                           Actual     Reconstructed   Scaled abs. error
+------------------------------------------------------------------------------------
+1     endpoint_health                 0.000000          0.426067            0.903825
+6     log_response_time               2.824900          3.380668            0.678242
+1     endpoint_products               0.000000         -0.251642            0.533814
+2     endpoint_health                 1.000000          0.750259            0.529780
+2     endpoint_products               0.000000          0.188457            0.399778
+1     response_time_ms              136.779999        118.021149            0.355438
+7     response_time_ms              155.460007        137.269440            0.344670
+1     endpoint_latency                1.000000          0.843203            0.332616
+1     log_response_time               4.925700          4.667567            0.315018
+4     response_time_ms              123.889999        139.006073            0.286416
+
+ASSESSMENT
+------------------------------------------------------------
+Candidate false positive requiring validation against the known normal test data and relevant operational context.
+
+LIMITATIONS
+------------------------------------------------------------
+- Feature contributions describe reconstruction error, not causality.
+- Reconstructed categorical indicators can be fractional or negative.
+- A model alert does not independently establish an operational incident.
+- Confirm the data labels and operational context before declaring a false positive.
+
+Provenance: generated from existing diagnostic CSV/JSON files.
+The trained model, scaler, and threshold were not modified.

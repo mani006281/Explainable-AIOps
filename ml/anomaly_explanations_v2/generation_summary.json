@@ -1,0 +1,9 @@
+{
+  "experiment": "normal_extended_v1",
+  "dataset": "normal_extended_test",
+  "total_test_windows": 81,
+  "flagged_windows": 1,
+  "explanations_generated": 1,
+  "output_directory": "C:\\Users\\penug\\Desktop\\Explainable-AIOps\\ml\\anomaly_explanations_v2",
+  "model_retrained": false
+}

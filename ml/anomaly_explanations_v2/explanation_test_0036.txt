@@ -1,0 +1,36 @@
+EXPLAINABLE AIOPS — AUTOMATIC ANOMALY EXPLANATION
+================================================================
+
+Window ID: test_0036
+Classification: Anomaly detected
+
+ANOMALY SCORE
+----------------------------------------------------------------
+Reconstruction error: 0.026219226
+Threshold:            0.025898805
+Threshold exceedance: 0.000320421
+Relative exceedance:  1.24% above the threshold.
+
+TOP CONTRIBUTING FEATURES
+----------------------------------------------------------------
+1. endpoint_health: 36.73% contribution
+2. log_response_time: 26.07% contribution
+3. endpoint_products: 15.90% contribution
+4. response_time_ms: 15.56% contribution
+5. endpoint_latency: 5.50% contribution
+
+INTERPRETATION
+----------------------------------------------------------------
+The leading reconstruction-error contributions involve both endpoint indicators and response-time features.
+
+IMPORTANT LIMITATIONS
+----------------------------------------------------------------
+- Contributions explain reconstruction error, not causality.
+- An anomaly prediction does not prove a production incident.
+- Validate alerts against independent operational evidence.
+- This script does not determine whether a window is a true or false positive.
+- Overlapping windows are not statistically independent.
+
+Source: existing normal_test_window_results.csv,
+normal_test_feature_errors.csv, and analysis_summary.json.
+No model retraining was performed.

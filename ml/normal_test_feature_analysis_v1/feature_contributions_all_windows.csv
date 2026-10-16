@@ -1,0 +1,13 @@
+feature,mean_squared_error,contribution_percent
+endpoint_health,0.040389095,29.196962
+log_response_time,0.038424484,27.776762
+endpoint_products,0.025293037,18.28414
+response_time_ms,0.023809234,17.21151
+endpoint_latency,0.009898431,7.155499
+is_http_error,0.00013709028,0.0991015
+status_200,0.0001144562,0.0827395
+status_400,7.907049e-05,0.05715944
+endpoint_other,6.615385e-05,0.047822107
+status_404,5.4103617e-05,0.039111085
+status_other,4.6680798e-05,0.03374519
+is_connection_error,2.137314e-05,0.015450477

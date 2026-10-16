@@ -1,0 +1,17 @@
+{
+  "experiment": "normal_extended_v1",
+  "dataset": "normal_extended_test",
+  "test_windows": 81,
+  "window_size": 10,
+  "feature_count": 12,
+  "threshold": 0.025898804888129234,
+  "mean_reconstruction_error": 0.011527766473591328,
+  "median_reconstruction_error": 0.008166411891579628,
+  "minimum_reconstruction_error": 0.0021697646006941795,
+  "maximum_reconstruction_error": 0.02621922641992569,
+  "flagged_windows": 1,
+  "unflagged_windows": 80,
+  "feature_error_method": "Mean squared scaled reconstruction error across the 10 time steps for each feature.",
+  "contribution_method": "Each feature's mean squared error divided by the sum of mean feature errors, expressed as a percentage.",
+  "warning": "Feature contributions are reconstruction-error attributions, not causal explanations. Overlapping windows are not independent."
+}

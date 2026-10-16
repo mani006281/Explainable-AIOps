@@ -1,0 +1,44 @@
+{
+  "experiment": "normal_extended_v1",
+  "dataset": "normal_extended_test",
+  "window_id": "test_0036",
+  "classification": "anomaly_detected",
+  "reconstruction_error": 0.026219226,
+  "threshold": 0.0258988048881292,
+  "threshold_exceedance": 0.0003204211118708021,
+  "threshold_exceedance_percent": 1.2372042387858142,
+  "top_features": [
+    {
+      "feature": "endpoint_health",
+      "mean_squared_scaled_error": 0.1155654,
+      "contribution_percent": 36.73049057161398
+    },
+    {
+      "feature": "log_response_time",
+      "mean_squared_scaled_error": 0.082018,
+      "contribution_percent": 26.068021879408843
+    },
+    {
+      "feature": "endpoint_products",
+      "mean_squared_scaled_error": 0.05003632,
+      "contribution_percent": 15.903190574326398
+    },
+    {
+      "feature": "response_time_ms",
+      "mean_squared_scaled_error": 0.048965674,
+      "contribution_percent": 15.562904010973211
+    },
+    {
+      "feature": "endpoint_latency",
+      "mean_squared_scaled_error": 0.01731247,
+      "contribution_percent": 5.502473197915204
+    }
+  ],
+  "interpretation": "The leading reconstruction-error contributions involve both endpoint indicators and response-time features.",
+  "limitations": [
+    "Feature contributions are reconstruction-error attributions, not causal explanations.",
+    "An anomaly prediction does not independently establish an operational incident.",
+    "The script does not determine ground-truth incident status.",
+    "Overlapping windows are not statistically independent."
+  ]
+}

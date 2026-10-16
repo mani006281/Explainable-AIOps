@@ -1,0 +1,14 @@
+{
+  "window_id": "test_0036",
+  "experiment": "normal_extended_v1",
+  "threshold": 0.025898804888129234,
+  "reconstruction_error": 0.02621922641992569,
+  "threshold_exceedance": 0.0003204215317964554,
+  "exceedance_percent_of_threshold": 1.2372058601951985,
+  "predicted_anomaly": true,
+  "window_size": 10,
+  "feature_count": 12,
+  "model_retrained": false,
+  "existing_artifacts_modified": false,
+  "interpretation_warning": "Feature errors describe reconstruction discrepancies, not causal explanations. Reconstructed raw values are inverse-scaled model outputs and may not be valid categorical indicators."
+}

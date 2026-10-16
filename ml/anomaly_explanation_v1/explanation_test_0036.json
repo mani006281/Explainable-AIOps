@@ -1,0 +1,42 @@
+{
+  "window_id": "test_0036",
+  "classification": "Anomaly detected",
+  "reconstruction_error": 0.02621922641992569,
+  "threshold": 0.025898804888129234,
+  "threshold_exceedance": 0.0003204215317964554,
+  "exceedance_percent_of_threshold": 1.2372058601951985,
+  "top_features": [
+    {
+      "feature": "endpoint_health",
+      "mean_squared_scaled_error": 0.1155654122004548,
+      "contribution_percent": 36.730493600813205
+    },
+    {
+      "feature": "log_response_time",
+      "mean_squared_scaled_error": 0.0820180036069359,
+      "contribution_percent": 26.068022423617315
+    },
+    {
+      "feature": "endpoint_products",
+      "mean_squared_scaled_error": 0.0500363102936717,
+      "contribution_percent": 15.903187121957746
+    },
+    {
+      "feature": "response_time_ms",
+      "mean_squared_scaled_error": 0.0489656756515614,
+      "contribution_percent": 15.562904176376868
+    },
+    {
+      "feature": "endpoint_latency",
+      "mean_squared_scaled_error": 0.0173124695342266,
+      "contribution_percent": 5.502472922765072
+    }
+  ],
+  "interpretation": "The leading reconstruction-error contributions involve both endpoint indicators and response-time features.",
+  "assessment": "Candidate false positive requiring validation against the known normal test data and relevant operational context.",
+  "limitations": [
+    "Feature contributions are reconstruction-error attributions, not causal explanations.",
+    "Reconstructed categorical indicators may be fractional or negative.",
+    "Operational incident status requires independent validation."
+  ]
+}
