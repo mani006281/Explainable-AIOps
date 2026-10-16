@@ -1,0 +1,21 @@
+{
+  "experiment": "normal_extended_v1",
+  "dataset": "slow_isolated",
+  "input_file": "C:\\Users\\penug\\Desktop\\Explainable-AIOps\\ecommerce-demo\\data\\traffic_features_slow_isolated.csv",
+  "model_file": "C:\\Users\\penug\\Desktop\\Explainable-AIOps\\ml\\artifacts_normal_extended_v1\\lstm_autoencoder.keras",
+  "scaler_file": "C:\\Users\\penug\\Desktop\\Explainable-AIOps\\ml\\artifacts_normal_extended_v1\\feature_scaler.joblib",
+  "observations": 40,
+  "features": 12,
+  "window_size": 10,
+  "windows_evaluated": 31,
+  "threshold": 0.025898804888129234,
+  "threshold_source": "Existing 95th percentile of normal validation errors",
+  "mean_reconstruction_error": 173.37991333007812,
+  "median_reconstruction_error": 174.06689453125,
+  "minimum_reconstruction_error": 171.5327911376953,
+  "maximum_reconstruction_error": 175.4417266845703,
+  "flagged_windows": 31,
+  "unflagged_windows": 0,
+  "flagged_percentage": 100.0,
+  "evaluation_note": "Results describe this isolated slow-traffic dataset only. They do not establish real-world detection performance, and overlapping windows are not independent observations."
+}

@@ -1,0 +1,3 @@
+dataset,windows_evaluated,windows_flagged,windows_not_flagged,flagged_percentage,mean_reconstruction_error,median_reconstruction_error,minimum_reconstruction_error,maximum_reconstruction_error,threshold
+normal_held_out_test,81,1,80,1.2346,0.011527765274074075,0.008166414,0.0021697641,0.026219232,0.025898804888129234
+isolated_slow_traffic,31,31,0,100.0,173.37988548387096,174.0669,171.53279,175.44173,0.025898804888129234

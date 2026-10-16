@@ -1,0 +1,75 @@
+{
+  "report_title": "Explainable-AIOps Normal vs Slow Traffic Comparison",
+  "generated_at_utc": "2026-10-16T06:43:49.450200+00:00",
+  "experiment": "normal_extended_v1",
+  "model": "LSTM Autoencoder",
+  "window_size": 10,
+  "features": 12,
+  "threshold": 0.025898804888129234,
+  "threshold_method": "validation_reconstruction_error_percentile",
+  "threshold_percentile": 95,
+  "datasets": [
+    {
+      "dataset": "normal_held_out_test",
+      "windows_evaluated": 81,
+      "windows_flagged": 1,
+      "windows_not_flagged": 80,
+      "flagged_percentage": 1.2346,
+      "mean_reconstruction_error": 0.011527765274074075,
+      "median_reconstruction_error": 0.008166414,
+      "minimum_reconstruction_error": 0.0021697641,
+      "maximum_reconstruction_error": 0.026219232,
+      "threshold": 0.025898804888129234
+    },
+    {
+      "dataset": "isolated_slow_traffic",
+      "windows_evaluated": 31,
+      "windows_flagged": 31,
+      "windows_not_flagged": 0,
+      "flagged_percentage": 100.0,
+      "mean_reconstruction_error": 173.37988548387096,
+      "median_reconstruction_error": 174.0669,
+      "minimum_reconstruction_error": 171.53279,
+      "maximum_reconstruction_error": 175.44173,
+      "threshold": 0.025898804888129234
+    }
+  ],
+  "source_files": {
+    "normal_test": "C:\\Users\\penug\\Desktop\\Explainable-AIOps\\ml\\artifacts_normal_extended_v1\\test_reconstruction_errors.csv",
+    "slow_traffic": "C:\\Users\\penug\\Desktop\\Explainable-AIOps\\ml\\evaluation_normal_extended_v1\\slow_traffic_results.csv",
+    "threshold_config": "C:\\Users\\penug\\Desktop\\Explainable-AIOps\\ml\\artifacts_normal_extended_v1\\anomaly_threshold.json",
+    "experiment_summary": "C:\\Users\\penug\\Desktop\\Explainable-AIOps\\ml\\artifacts_normal_extended_v1\\experiment_summary.json"
+  },
+  "original_experiment_summary": {
+    "experiment": "normal_extended_v1",
+    "raw_observations": 600,
+    "raw_training_observations": 420,
+    "training_sequences": 411,
+    "validation_sequences": 81,
+    "test_sequences": 81,
+    "features": 12,
+    "window_size": 10,
+    "epochs_completed": 100,
+    "best_validation_loss": 0.01295619085431099,
+    "final_training_loss": 0.024672169238328934,
+    "final_validation_loss": 0.014483870007097721,
+    "threshold": 0.025898804888129234,
+    "validation_windows_flagged": 4,
+    "validation_windows_total": 81,
+    "test_windows_flagged": 1,
+    "test_windows_total": 81,
+    "mean_test_reconstruction_error": 0.011527764610946178,
+    "median_test_reconstruction_error": 0.008166413754224777,
+    "max_test_reconstruction_error": 0.026219232007861137,
+    "warning": "Test windows are normal-only, but the threshold was selected using validation errors. Test results estimate normal false alarms on this dataset only; they do not measure anomaly recall."
+  },
+  "limitations": [
+    "Results apply only to the datasets evaluated.",
+    "Overlapping windows are not independent observations.",
+    "Normal-only test data does not measure anomaly recall.",
+    "The threshold is a prototype threshold derived from normal validation errors.",
+    "Reconstruction-error flags do not establish root cause."
+  ],
+  "model_retrained": false,
+  "artifacts_modified": false
+}
