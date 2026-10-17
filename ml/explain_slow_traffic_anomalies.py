@@ -32,7 +32,7 @@ INPUT_FILE = (
     DEMO_DIR / "data" / "traffic_features_slow_isolated.csv"
 )
 
-OUTPUT_DIR = SCRIPT_DIR / "slow_traffic_explanations_v1"
+OUTPUT_DIR = SCRIPT_DIR / "slow_traffic_explanations_v3"
 
 
 # ============================================================
@@ -288,7 +288,7 @@ for index in range(window_count):
                 "mean_squared_scaled_reconstruction_error": (
                     error_value
                 ),
-                "is_anomaly_candidate": flagged,
+                "window_is_anomaly": flagged,
             }
         )
 
@@ -300,7 +300,7 @@ for index in range(window_count):
                     error_value
                 ),
                 "contribution_percentage": contribution_value,
-                "is_anomaly_candidate": flagged,
+                "window_is_anomaly": flagged,
             }
         )
 
@@ -380,6 +380,17 @@ summary = {
         "experiment",
         "normal_extended_v1",
     ),
+    "report_version": 3,
+    "source_report_version": 2,
+    "feature_flag_semantics": (
+        "window_is_anomaly indicates whether the complete sequence "
+        "was classified as anomalous using the saved overall "
+        "reconstruction-error threshold. It is repeated across "
+        "feature rows for context and is not an independent "
+        "anomaly decision for each feature."
+    ),
+    "model_inference_rerun": True,
+    "model_artifacts_modified": False,
     "dataset": "slow_isolated",
     "input_file": str(INPUT_FILE),
     "model_file": str(MODEL_FILE),
