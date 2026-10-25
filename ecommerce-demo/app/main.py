@@ -2,12 +2,24 @@
 import asyncio
 import os
 import time
+from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 
+from fastapi.middleware.cors import CORSMiddleware
+
 from app.database import test_database_connection
 from app.logging.logger import get_logger
+from app.anomaly_detection import (
+    AnomalyResult,
+    get_detector_status,
+    record_observation,
+)
+from app.incident_store import (
+    record_incident,
+    get_incident_history,
+)
 
 from app.routes.products import router as products_router
 from app.routes.users import router as users_router
@@ -25,12 +37,53 @@ app = FastAPI(
     version="0.1.0",
 )
 
+# Configure CORS strictly for local React development origins
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 logger = get_logger()
 
 
 # ---------------------------------------------------------
-# HTTP Request Logging Middleware
+# Anomaly Detector State & Formatter
+# ---------------------------------------------------------
+
+_latest_detection_result: Optional[dict] = None
+
+
+def _format_anomaly_result(result: AnomalyResult) -> dict:
+    """Format an AnomalyResult for the public /aiops/status endpoint.
+    Excludes internal artifact paths and credentials."""
+    top_contributor = None
+    if result.per_feature_errors:
+        top_contributor = result.per_feature_errors[0]
+
+    return {
+        "window_ready": result.window_ready,
+        "is_anomaly": result.is_anomaly,
+        "reconstruction_error": (
+            round(result.reconstruction_error, 6)
+            if result.reconstruction_error is not None
+            else None
+        ),
+        "threshold": round(result.threshold, 6),
+        "window_size": result.window_size,
+        "top_feature_contributor": top_contributor,
+        "error_message": result.error_message,
+    }
+
+
+# ---------------------------------------------------------
+# HTTP Request Logging & AIOps Middleware
 # ---------------------------------------------------------
 
 @app.middleware("http")
@@ -38,6 +91,7 @@ async def request_logging_middleware(
     request: Request,
     call_next,
 ):
+    global _latest_detection_result
     start_time = time.perf_counter()
     status_code = 500
 
@@ -62,6 +116,71 @@ async def request_logging_middleware(
                 "response_time_ms": response_time_ms,
             },
         )
+
+        # Exclude monitoring endpoints and HTTP OPTIONS requests from anomaly detection observations
+        req_path = request.url.path.split("?")[0].rstrip("/")
+        EXCLUDED_OBSERVATION_PATHS = {"/aiops/status", "/aiops/incidents"}
+        if request.method != "OPTIONS" and req_path not in EXCLUDED_OBSERVATION_PATHS:
+            try:
+                # Offload to worker thread so TensorFlow inference does not block
+                # the asyncio event loop.
+                detection_result = await asyncio.to_thread(
+                    record_observation,
+                    request.url.path,
+                    status_code,
+                    response_time_ms,
+                )
+                _latest_detection_result = _format_anomaly_result(detection_result)
+
+                if detection_result.is_anomaly:
+                    logger.warning(
+                        "AIOps: Anomaly detected in HTTP request",
+                        extra={
+                            "event": "anomaly_detected",
+                            "method": request.method,
+                            "path": request.url.path,
+                            "status_code": status_code,
+                            "response_time_ms": response_time_ms,
+                            "reconstruction_error": detection_result.reconstruction_error,
+                            "threshold": detection_result.threshold,
+                            "top_contributor": (
+                                detection_result.per_feature_errors[0]
+                                if detection_result.per_feature_errors
+                                else None
+                            ),
+                        },
+                    )
+
+                    # Record incident in bounded in-memory history
+                    try:
+                        record_incident(
+                            path=request.url.path,
+                            status_code=status_code,
+                            response_time_ms=response_time_ms,
+                            reconstruction_error=detection_result.reconstruction_error,
+                            threshold=detection_result.threshold,
+                            per_feature_errors=detection_result.per_feature_errors,
+                        )
+                    except Exception as inc_exc:
+                        # Incident recording failure must never break the HTTP response
+                        logger.error(
+                            "AIOps: Failed to record incident in history",
+                            extra={
+                                "event": "incident_record_error",
+                                "error_type": type(inc_exc).__name__,
+                                "error_message": str(inc_exc),
+                            },
+                        )
+            except Exception as exc:
+                # Anomaly detection failures must never fail an HTTP request
+                logger.error(
+                    "AIOps: Anomaly detection middleware processing error",
+                    extra={
+                        "event": "anomaly_detection_error",
+                        "error_type": type(exc).__name__,
+                        "error_message": str(exc),
+                    },
+                )
 
 
 # ---------------------------------------------------------
@@ -131,6 +250,56 @@ def database_health():
     return {
         "database": database,
         "status": "connected",
+    }
+
+
+# ---------------------------------------------------------
+# AIOps Status Endpoint
+# ---------------------------------------------------------
+
+@app.get("/aiops/status", tags=["AIOps"])
+def aiops_status():
+    """
+    Read-only status endpoint for the Explainable AIOps anomaly detector.
+    Exposes readiness, window size, saved threshold, and latest result.
+    Does NOT expose credentials, database settings, or internal filesystem paths.
+    """
+    raw_status = get_detector_status()
+
+    return {
+        "service": "ecommerce-aiops",
+        "detector_ready": raw_status.get("window_ready", False),
+        "window_size": raw_status.get("window_size", 0),
+        "window_capacity": raw_status.get("window_capacity", 10),
+        "saved_threshold": raw_status.get("threshold", 0.0),
+        "artifacts_loaded": raw_status.get("artifacts_loaded", False),
+        "load_error": raw_status.get("load_error"),
+        "latest_detection_result": _latest_detection_result,
+    }
+
+
+# ---------------------------------------------------------
+# AIOps Incidents Endpoint
+# ---------------------------------------------------------
+
+@app.get("/aiops/incidents", tags=["AIOps"])
+def aiops_incidents(limit: int = 100):
+    """
+    Read-only endpoint returning bounded in-memory incident history
+    (maximum 100 records, newest first).
+    Does NOT expose credentials, database configuration, or internal file paths.
+    """
+    incidents = get_incident_history(limit=limit)
+
+    return {
+        "service": "ecommerce-aiops",
+        "incident_count": len(incidents),
+        "max_capacity": 100,
+        "explanation_disclaimer": (
+            "Feature contributions represent reconstruction-error contributions "
+            "from the LSTM Autoencoder, not proven causal root causes."
+        ),
+        "incidents": incidents,
     }
 
 
