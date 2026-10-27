@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import "./App.css";
 
 const API_BASE_URL =
@@ -20,11 +20,136 @@ function StatusCard({ title, value, description, variant = "neutral" }) {
   );
 }
 
+function formatIncidentTime(value) {
+  if (!value) return "Unknown";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Unknown";
+  return new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+  }).format(date) + " IST";
+}
+
+function IncidentHistory({ records }) {
+  const [selectedIncident, setSelectedIncident] = useState(null);
+  const [page, setPage] = useState(1);
+  const pageSize = 10;
+  const totalPages = Math.max(1, Math.ceil(records.length / pageSize));
+  const currentPage = Math.min(page, totalPages);
+  const visible = records.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  return (
+    <div className="incident-history">
+      <div className="incident-history-heading">
+        <h4>Incident History</h4>
+        <span>Latest {records.length} stored incident{records.length === 1 ? "" : "s"}</span>
+      </div>
+      <div className="incident-table-scroll">
+        <table className="incident-table">
+          <thead>
+            <tr>
+              <th>Time (IST)</th>
+              <th>Endpoint</th>
+              <th>HTTP Status</th>
+              <th>Response Time</th>
+              <th>Reconstruction Error</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {visible.map((incident, index) => {
+              const key = `${incident.timestamp_utc}-${incident.path}-${(currentPage - 1) * pageSize + index}`;
+              const expanded = selectedIncident === key;
+              const features = Array.isArray(incident.top_contributing_features)
+                ? incident.top_contributing_features
+                : [];
+              const maxContribution = Math.max(
+                0,
+                ...features.map((feature) => Number(feature.reconstruction_error) || 0)
+              );
+              return (
+                <Fragment key={key}>
+                  <tr>
+                    <td>{formatIncidentTime(incident.timestamp_utc)}</td>
+                    <td><code>{incident.path || "Unknown"}</code></td>
+                    <td><span className={`http-badge ${incident.status_code >= 400 ? "http-error" : "http-ok"}`}>{incident.status_code ?? "—"}</span></td>
+                    <td>{typeof incident.response_time_ms === "number" ? `${incident.response_time_ms.toFixed(2)} ms` : "—"}</td>
+                    <td><strong>{typeof incident.reconstruction_error === "number" ? incident.reconstruction_error.toFixed(6) : "—"}</strong></td>
+                    <td>
+                      <button
+                        className="incident-details-button"
+                        type="button"
+                        aria-expanded={expanded}
+                        onClick={() => setSelectedIncident(expanded ? null : key)}
+                      >
+                        {expanded ? "Hide Details" : "View Details"}
+                      </button>
+                    </td>
+                  </tr>
+                  {expanded && (
+                    <tr className="incident-details-row">
+                      <td colSpan={6}>
+                        <div className="incident-details">
+                          <div className="incident-detail-metrics">
+                            <span>Reconstruction error: <strong>{Number(incident.reconstruction_error).toFixed(6)}</strong></span>
+                            <span>Saved threshold: <strong>{Number(incident.threshold).toFixed(6)}</strong></span>
+                          </div>
+                          <h5>Top Contributing Features</h5>
+                          {features.length === 0 ? (
+                            <p className="panel-note">Feature-level contributions are not available for this incident.</p>
+                          ) : (
+                            <div className="feature-list">
+                              {features.map((feature, featureIndex) => {
+                                const contribution = Number(feature.reconstruction_error) || 0;
+                                const width = maxContribution > 0 ? (contribution / maxContribution) * 100 : 0;
+                                return (
+                                  <div className="feature-item" key={`${feature.feature}-${featureIndex}`}>
+                                    <div className="feature-heading">
+                                      <span>{feature.feature}</span>
+                                      <strong>{contribution.toFixed(6)}</strong>
+                                    </div>
+                                    <div className="feature-track">
+                                      <div className="feature-fill" style={{ width: `${width}%` }} />
+                                    </div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                          <p className="disclaimer">{incident.explanation || "These are feature-level reconstruction-error contributions, not proven causal root causes."}</p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+      {totalPages > 1 && (
+        <div className="incident-pagination">
+          <button type="button" disabled={currentPage === 1} onClick={() => { setPage(currentPage - 1); setSelectedIncident(null); }}>Previous</button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button type="button" disabled={currentPage === totalPages} onClick={() => { setPage(currentPage + 1); setSelectedIncident(null); }}>Next</button>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function App() {
   const [backend, setBackend] = useState(null);
   const [database, setDatabase] = useState(null);
   const [aiops, setAiops] = useState(null);
   const [incidents, setIncidents] = useState(null);
+  const incidentRecords = Array.isArray(incidents?.incidents) ? incidents.incidents : [];
 
   const [loading, setLoading] = useState(true);
   const [lastUpdated, setLastUpdated] = useState(null);
@@ -307,11 +432,13 @@ function App() {
               </span>
             </div>
 
-            <p className="panel-note">
-              {incidents?.incident_count > 0
-                ? "Anomaly incidents are available for detailed inspection."
-                : "No anomaly incidents are currently recorded."}
-            </p>
+            {incidentRecords.length > 0 ? (
+              <IncidentHistory records={incidentRecords} />
+            ) : (
+              <p className="panel-note">
+                {incidents ? "No anomaly incidents are currently recorded." : "Incident data is not currently available."}
+              </p>
+            )}
 
             <p className="disclaimer">
               Feature contributions indicate reconstruction-error contributions,
